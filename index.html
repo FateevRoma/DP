@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Каталог товарів</h2>
+<form method="get" id="filter-form" class="row g-3 mb-4 align-items-end">
+    <div class="col-md-3">
+        <label for="q" class="form-label">Пошук</label>
+        <input type="text" id="q" name="q" class="form-control" placeholder="Назва товару" value="{{ query }}">
+    </div>
+    <div class="col-md-2">
+        <label for="price" class="form-label">Макс. ціна</label>
+        <input type="number" id="price" name="price" class="form-control" placeholder="Ціна" value="{{ price }}">
+    </div>
+    <div class="col-md-3">
+        <label for="category" class="form-label">Категорія</label>
+        <select id="category" name="category" class="form-select">
+            <option value="">Усі категорії</option>
+            {% for cat in categories %}
+                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+    <label for="sort" class="form-label">Сортування</label>
+    <select name="sort" id="sort" class="form-select">
+        <option value="">Без сортування</option>
+        <option value="price_asc" {% if selected_sort =='price_asc' %}selected{% endif %}>Ціна ↑</option>
+        <option value="price_desc" {% if selected_sort =='price_desc' %}selected{% endif %}>Ціна ↓</option>
+    </select>
+</div>
+    <div class="col-md-3">
+        <label for="subcategory" class="form-label">Підкатегорія</label>
+        <select id="subcategory" name="subcategory" class="form-select">
+            <option value="">Усі підкатегорії</option>
+            {% if selected_category in subcategories %}
+                {% for sub in subcategories[selected_category] %}
+                    <option value="{{ sub }}" {% if selected_subcategory == sub %}selected{% endif %}>{{ sub }}</option>
+                {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+    <div class="col-md-1 d-grid">
+        <button class="btn btn-primary">🔍</button>
+    </div>
+    <div class="col-12">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm">Очистити фільтри</a>
+    </div>
+</form>
+{% if products %}
+    <p class="text-muted mb-3">
+        ✅ Знайдено {{ products|length }}
+        {{ 'товар' if products|length == 1 else 'товари' if products|length < 5 else 'товарів' }}
+    </p>
+{% endif %}
+{% if products %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for product in products %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            {% if product.image %}
+            <img src="{{ url_for('static', filename='uploads/' ~ product.image) }}"
+                 class="card-img-top product-image"
+                 alt="{{ product.name }}">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text"><strong>Ціна:</strong> {{ product.price }} ₴</p>
+                {% if product.category %}
+                    <span class="badge bg-info text-dark">{{ product.category }}</span>
+                {% endif %}
+                {% if product.subcategory %}
+                    <span class="badge bg-secondary">{{ product.subcategory }}</span>
+                {% endif %}
+                <a href="{{ url_for('add_to_cart', product_id=product.id) }}"
+                   class="btn btn-primary mt-auto">Додати в кошик</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-warning text-center" role="alert">
+    🧐 Товарів не знайдено. Спробуйте інші фільтри або пошуковий запит.
+</div>
+{% endif %}
+<script>
+    const subcategoryMap = {{ subcategories | tojson }};
+    const categorySelect = document.getElementById('category');
+    const subcategorySelect = document.getElementById('subcategory');
+    categorySelect.addEventListener('change', () => {
+        const selected = categorySelect.value;
+        const options = subcategoryMap[selected] || [];
+        subcategorySelect.innerHTML = '<option value="">Усі підкатегорії</option>';
+        options.forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub;
+            opt.textContent = sub;
+            subcategorySelect.appendChild(opt);
+        });
+    });
+</script>
+{% endblock %}
