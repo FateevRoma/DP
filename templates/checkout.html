@@ -1,10 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<h2>Оформлення замовлення</h2>
+<form method="post" class="row g-3">
+    <div class="col-md-6">
+        <label for="name" class="form-label">Ім'я</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="col-md-6">
+        <label for="phone" class="form-label">Телефон</label>
+        <input type="tel" name="phone" class="form-control" required>
+    </div>
+    <div class="col-12">
+        <label for="address" class="form-label">Адреса доставки</label>
+        <textarea name="address" class="form-control" rows="3" required></textarea>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-success">Оформити</button>
+    </div>
+</form>
+{% endblock %}

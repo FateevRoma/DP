@@ -1,10 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ action }} товар</h2>
+<form method="post" enctype="multipart/form-data" class="col-md-6">
+    <div class="mb-3">
+        <label class="form-label">Назва</label>
+        <input type="text" name="name" class="form-control" value="{{ product.name or '' }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Ціна</label>
+        <input type="number" name="price" class="form-control" value="{{ product.price or '' }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Категорія</label>
+        <input type="text" name="category" class="form-control" value="{{ product.category or '' }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Підкатегорія</label>
+        <input type="text" name="subcategory" class="form-control" value="{{ product.subcategory or '' }}">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Зображення</label>
+        <input type="file" name="image" class="form-control">
+        {% if product.image %}
+            <p class="mt-2">Поточне зображення: <img src="{{ url_for('static', filename='uploads/' ~ product.image) }}" height="60"></p>
+        {% endif %}
+    </div>
+
+    <button class="btn btn-primary">{{ action }}</button>
+    <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary">Скасувати</a>
+</form>
+{% endblock %}

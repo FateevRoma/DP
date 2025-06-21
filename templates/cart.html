@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<h1>Кошик</h1>
+{% if items %}
+<ul class="list-group mb-3">
+    {% for item in items %}
+    <li class="list-group-item d-flex justify-content-between">
+        {{ item.name }}
+        <span>{{ item.price }} ₴</span>
+    </li>
+    {% endfor %}
+</ul>
+<h4>Разом: {{ total }} ₴</h4>
+<a href="{{ url_for('clear_cart') }}" class="btn btn-danger">Очистити кошик</a>
+<a href="{{ url_for('checkout') }}" class="btn btn-primary mt-3">Оформити замовлення</a>
+{% else %}
+<p>Кошик порожній.</p>
+{% endif %}
+{% endblock %}
